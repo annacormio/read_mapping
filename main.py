@@ -30,44 +30,69 @@ def bwt(t): #implement Burrows-Wheeler transform compression of the string
         bwtstring+=s[-1:]
     return bwtstring
 
-
-def revBwt(b):
-    t=""
+"""
+t=""
     #Counts each char occurrencies
     chars = list(b)  #corresponds to last matrix column
     ordered = sorted(chars) #corresponds to the first matrix column
     print(chars, "\n", ordered)
     inverted = ""
+    
     c = ordered[0]
     i = 0
+    x = ''
     count = 0
     countOccorrenze = 0
     countNuoveOccorrenze = 0
-    for i in range(len)
-
-
+    while x != '$':
+        x = chars[i]
+        inverted += x
+        for j in range(count + 1):
+            if chars[j] == x:
+                countOccorrenze += 1
+        for j in range(len(ordered)):
+            if ordered[j] == x:
+                countNuoveOccorrenze += 1
+                if countNuoveOccorrenze == countOccorrenze:
+                    i = j
+                    break
         countOccorrenze = 0
         countNuoveOccorrenze = 0
-        count += 1
+        count = i
+        x = chars[i]
+    original = inverted[::-1]
+    original += '$'
+    return original
+"""
+def revBwt(b):
+    #given a list and an element, find all the occurrencies_indexes of that element in the list
+    def all_indexes(list, c):
+          idxs = [i for i, x in enumerate(list) if x == c]
+          return idxs
+    #given a list and an index, and an element, find
+    def occurrences(list,index):
+          return list[0: (index + 1)].count(c)
 
-    while True:
-        inverted += c
-        c = chars[i]
-        occ = chars[0:i + 1].count(c)
+    chars = list(b)
+    ord_chars = sorted(chars)
 
-        idxs = [i for i, x in enumerate(ordered) if x == c] #given a list and an element, find all the occurrencies of that element in the list
-        i = idxs[occ-1]
+    index = 0
+    c =  chars[index]
+    inverted = "$"
 
+    while(c != '$'):
+        inverted = inverted + c
+        occ_c = occurrences(chars, index)
+        index = all_indexes(ord_chars,c)[occ_c-1]
+        c = chars[index]
 
-
-
+    print(inverted)
     original = inverted[::-1]
     return original
 
-
 if __name__=="__main__":
     #t=getGenome(5)
-    t='AAACTTG$'
+    t = 'abtttttaajjccba$'
     print("Orig.: ", t)
 
     transformed = bwt(t)

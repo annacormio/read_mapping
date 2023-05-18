@@ -1,15 +1,13 @@
 import random
-import itertools
-
-
 
 # INPUT
-def getGenome(length=1000):
+def getGenome(length=1000): #generate a random genome seq ending with $ character
     genome = "".join(random.choice('ATCG') for i in range(length))
+    genome+='$'
     return genome
 
 
-
+#computes all the rotations (each time the first char of the running string is placed at the end of it) of the string t
 def sortedRotations(t):
     s=t
     rot=[s]
@@ -17,89 +15,53 @@ def sortedRotations(t):
     while s!=t:
         rot.append(s)
         s = s[1:] + s[0]
-
-    rot = sorted(rot)
-    print("Sorted Rotations: ", rot)
-    return rot
+    return sorted(rot)
 
 
-def bwt(t): #implement Burrows-Wheeler transform compression of the string
-    r=sortedRotations(t)
+#computes the Burrows-Wheeler transform compression of the string
+def bwt(t):
+    r=sortedRotations(t) #generate sorted rotations of the string
     bwtstring=''
-    for s in r:
-        bwtstring+=s[-1:]
+    for s in r: #iterate through all char of the last line building BWT
+        bwtstring+=s[-1] #adding last char of each rotation string
     return bwtstring
 
-"""
-t=""
-    #Counts each char occurrencies
-    chars = list(b)  #corresponds to last matrix column
-    ordered = sorted(chars) #corresponds to the first matrix column
-    print(chars, "\n", ordered)
-    inverted = ""
-    
-    c = ordered[0]
-    i = 0
-    x = ''
-    count = 0
-    countOccorrenze = 0
-    countNuoveOccorrenze = 0
-    while x != '$':
-        x = chars[i]
-        inverted += x
-        for j in range(count + 1):
-            if chars[j] == x:
-                countOccorrenze += 1
-        for j in range(len(ordered)):
-            if ordered[j] == x:
-                countNuoveOccorrenze += 1
-                if countNuoveOccorrenze == countOccorrenze:
-                    i = j
-                    break
-        countOccorrenze = 0
-        countNuoveOccorrenze = 0
-        count = i
-        x = chars[i]
-    original = inverted[::-1]
-    original += '$'
-    return original
-"""
+
+#stores the index of each of the occurencies of the element c in the list l
+def all_indexes(l, c):
+    # for each index i and element x of the list l
+    idxs = [i for i, x in enumerate(l) if x == c]  # if x is equal to the searched character c its position index in l is stored in a list
+    return idxs
+
+
+#finds the number of occurrences of an element c in the list l searching it up to the indexed position i
+def occurrences(l,i,c):
+    return l[0: (i + 1)].count(c) #in the sliced list from 0 to the index i+1 of c (c included) in the list l, counts how many c characters occur
+
 def revBwt(b):
-    #given a list and an element, find all the occurrencies_indexes of that element in the list
-    def all_indexes(list, c):
-          idxs = [i for i, x in enumerate(list) if x == c]
-          return idxs
-    #given a list and an index, and an element, find
-    def occurrences(list,index):
-          return list[0: (index + 1)].count(c)
-
-    chars = list(b)
-    ord_chars = sorted(chars)
-
-    index = 0
-    c =  chars[index]
-    inverted = "$"
-
-    while(c != '$'):
-        inverted = inverted + c
-        occ_c = occurrences(chars, index)
-        index = all_indexes(ord_chars,c)[occ_c-1]
-        c = chars[index]
-
-    print(inverted)
-    original = inverted[::-1]
+    L= list(b) #last line of the bwt matrix is the bwt
+    F = sorted(b) #the first line of the bwt matrix is  basically the bwt sorted
+    index = 0 #start from the first position
+    c = L[index] #character corresponding to $ in L
+    inverted = "$" #intantiate the reverse transformation string of bwt
+    while(c != '$'): #until we find in L a $
+        inverted += c
+        occ_c_L = occurrences(L,index,c) #counting number of occurences of c in L up to the position of L in which we are
+        index = all_indexes(F,c)[occ_c_L-1]
+        c = L[index]
+    original = inverted[::-1] #we recunstructed from the bottom of the string so we need to invert it to have the original
     return original
 
 if __name__=="__main__":
-    #t=getGenome(5)
-    t = 'abtttttaajjccba$'
-    print("Orig.: ", t)
-
+    t=getGenome(10)
+    #t = 'ACACAGTACCGTA$'
+    print("Original: ", t)
+    rotations=sortedRotations(t)
+    print("soted rotations",rotations)
     transformed = bwt(t)
     print("Transformed: ", transformed)
-
     original = revBwt(transformed)
-    print(original)
+    print("Reversed bwt: ",original)
 
 
 

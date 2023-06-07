@@ -37,18 +37,24 @@ def all_indexes(l, c):
 
 #returns the rank of a given character c in position i in a given list l
 def rank(c,l,i):
-    return l[0: (i + 1)].count(c) #in the sliced list from 0 to the index i+1 of c (c included) in the list l, counts how many c characters occur
+    count=l[0: (i + 1)].count(c)
+    return (count-1) #in the sliced list from 0 to the index i+1 of c (c included) in the list l, counts how many c characters occur
+
+#return array of offset matching with L list
+#def offset(t):
+
 
 
 #returns the index of a character c in a list l known its rank r
 def position(c,l,r):
     count=-1 #count of the rank encountered
     pos=-1 #store position
-    while count<r and pos<=(len(l)-1):
+    while count<r and pos<len(l)-1:
         pos += 1
         n=l[pos]
         if n==c:
             count+=1
+
     return pos
 
 
@@ -61,8 +67,8 @@ def revBwt(b):
     inverted = "$" #intantiate the reverse transformation string of bwt
     while(c != '$'): #until we find in L a $
         inverted += c
-        occ_c_L = rank(c, L, index)  #counting number of occurences of c in L up to the position of L in which we are
-        index = position(c,F,occ_c_L-1)
+        rank_c = rank(c, L, index)  #counting number of occurences of c in L up to the position of L in which we are
+        index = position(c,F,rank_c)
         c = L[index]
     original = inverted[::-1] #we recunstructed from the bottom of the string so we need to invert it to have the original
     return original
@@ -71,14 +77,14 @@ def revBwt(b):
 def match(t, p):
     F = list(sorted(t))  # first string
     L = list(bwt(t))  # bwt string
-    q = list(p)[:-1] #all characters of p are elements of a list deleting the dollar
+    q = list(p)
     sol=[] #initialize solution list indx in L, more than one solution is possible
     c = q.pop(-1) #last query character
     
     #operations for first character check, check all in F list at the beginning
     indx = all_indexes(F, c)  # list of indexes of occurence of c in F
     for i in indx:
-        if L[i] == q[-1]:  # as soon as I find the next character in L i break
+        if L[i] == q[-1]:  # if the corresponding character in L is equal to the characater befoe the current one in p
             sol.append(i) #add the index to the list
             
     #further operations on the rest of the character
@@ -86,35 +92,20 @@ def match(t, p):
         pos = sol.copy()  # create a copy of sol
         sol.clear()
         c=q.pop(-1)
-        for s in pos:
-            r = rank(c,L,s)
-            p=position(c,F,r)
-            if L[p]==q[-1]:
-                sol.append(p)
-        
+        for p in pos:
+            r = rank(c,L,p) #get the rank of c in L list
+            i=position(c,F,r) #from their rank I retrieve their position in F
+            if L[i]==q[-1]:
+                sol.append(i) #if then there is a correspondance btw F and L, append the position to the solution
+
     return sol
         
-        
-    
-
-
-
-
-#def offset(t):
-
-
-#def match(t,p):
-
-
-
-
-
 
 
 if __name__=="__main__":
     #t=getGenome(20)
-    t = 'ACACAGTACCGTACATTTCAGTAACACAGTCA$'
-    p='GTA'
+    t = 'ACGCATGCA$'
+    p='GCA'
     print("Original: ", t)
     print('Query: ',p)
     rotations=sortedRotations(t)
@@ -123,10 +114,10 @@ if __name__=="__main__":
     F = sorted(t)
     print("Transformed: ", L)
     original = revBwt(L)
-    #print("Reversed bwt: ",original)
+    print("Reversed bwt: ",original)
     match=match(t,p)
     print('matching? ',match)
-    print('position',position('T',list(t),4))
+    #print('position',position('G',list(t),0))
 
 
 

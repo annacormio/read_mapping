@@ -119,18 +119,25 @@ def match(t, p):
 
 
 if __name__=="__main__":
-    t=getGenome(20)
-    #t = 'GAGTCCATTGAGTTTAG$'
-    p='AG'
+    #t=getGenome(20)
+    t = 'CTAAAAATAGTTCGCCCCCGGATGAGATAAAAAGT$'
+    p1='CCCCC'
+    p2='AAAAA'
+    p3='GTTGA'
     print("Original: ", t)
-    print('Query: ',p)
+    print('P1: ',p1)
+    print('P2: ', p2)
+    print('P3: ', p3)
+    print('P1:', match(t, p1))
+    print('P2:', match(t, p2))
+    print('P3:', match(t, p3))
     #rotations= Rotations(t)
     #print("sorted rotations",sorted(rotations))
     #L = bwt(t)
     #print("Transformed: ", L)
     #original = revBwt(L)
     #print("Reversed bwt: ",original)
-    print(match(t,p))
+
     #print('offset list', offset(t))
 
 
